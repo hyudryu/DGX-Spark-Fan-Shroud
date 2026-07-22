@@ -1,2 +1,57 @@
 # DGX-Spark-Fan-Shroud
-Fan Shroud for the Spark platform, for improved cooling performance on long workloads. Full STL/STEP files + electronics schematics
+
+Fan shroud for the NVIDIA DGX Spark (GX10) platform, for improved cooling performance on long workloads. Full STL/STEP files + electronics schematics, plus firmware and host software for automatic temperature-based fan control.
+
+The stock cooling on the DGX Spark can thermal-throttle during sustained multi-hour training or inference runs. This project adds a 3D-printed shroud that mounts a high-static-pressure Noctua industrialPPC fan over the heatsink, driven by a closed-loop controller that ramps fan speed with chip temperature — quiet at idle, full airflow under load.
+
+## Repository Contents
+
+| Path | Description |
+| --- | --- |
+| `3D Files/STL/` | Print-ready STL files (`GX10 Shroud.stl`, `GX10 Shroud Leg.stl`) |
+| `3D Files/STEP/` | Editable STEP files (`GX10 Shroud.step`, `GX10 Leg.step`) for remixing in your CAD tool of choice |
+| `Benchmark/` | Interactive thermal benchmark graph (open the HTML file in a browser) |
+
+## Bill of Materials
+
+| Part | Purpose | Link |
+| --- | --- | --- |
+| Noctua industrialPPC fan | High static pressure / airflow through the shroud | https://amzn.to/4gRzM0Q |
+| PWM controller | Generates the 25 kHz PWM signal that drives the fan | https://amzn.to/4pzXktr |
+| Digital potentiometer | Sets the control voltage on the PWM controller from the microcontroller | https://amzn.to/4ffs8ft |
+| RP2040-Zero | Microcontroller that reads temperature and drives the digital potentiometer | https://amzn.to/3TepWfD |
+
+*(Links are Amazon affiliate links.)*
+
+You will also need:
+
+- Appropriate DC power for the fan (check your fan's rated voltage — industrialPPC variants are commonly 24 V)
+- Hookup wire, connectors, and M3/M4 fasteners for the shroud legs
+
+## How It Works
+
+1. **Sense** — the control software polls the SoC temperature on the Spark (via `nvidia-smi` / tegrastats / hwmon).
+2. **Decide** — a control loop (hysteresis or PI curve) maps temperature to a target fan duty cycle.
+3. **Actuate** — the firmware sets the digital potentiometer wiper, which drives the analog control input of the PWM controller, which in turn sets the fan's duty cycle.
+
+This keeps the fan curve entirely under software control — you can tune it from a config file or CLI without touching hardware.
+
+## Performance
+
+- **~20 °C cooler under max load** compared to stock cooling.
+- Configured to **maintain ~80 °C under normal regular use** via the software fan curve.
+- See `Benchmark/` for an interactive thermal benchmark graph comparing runs.
+
+## 3D Printing
+
+- Print the shroud in a temperature-resistant filament — **PETG minimum, ASA/ABS or PC blend recommended** near the heatsink exhaust.
+- The leg (`GX10 Shroud Leg.stl`) supports the shroud against the chassis; print with the flat face on the build plate.
+- Suggested settings: 0.2 mm layers, 4 walls, 40 %+ infill for the legs.
+
+## Firmware & Software
+
+Firmware for the MCU (digital-pot driver, serial command interface) and the host-side daemon (temperature polling + fan curve) live in this repository and are being fleshed out alongside the hardware. See the repo issues/roadmap for current status.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
