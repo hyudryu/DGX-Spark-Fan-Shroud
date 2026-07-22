@@ -30,7 +30,8 @@ The stock cooling on the DGX Spark can thermal-throttle during sustained multi-h
 You will also need:
 
 - Appropriate DC power for the fan (check your fan's rated voltage — industrialPPC variants are commonly 24 V)
-- Hookup wire, connectors, and M3/M4 fasteners for the shroud legs
+- A USB-C cable capable of **data** transfer (for flashing the RP2040-Zero)
+- Soldering iron and hookup wire, plus M3/M4 fasteners for the shroud legs
 
 ## How It Works
 
@@ -102,6 +103,121 @@ X9C103 VH ─────────── Owltree outer pot pad
 X9C103 VW ─────────── Owltree center/wiper pad
 X9C103 VL ─────────── Owltree outer pot pad
 ```
+
+If the fan speed moves in the **opposite direction** from what the firmware expects, swap `VH` and `VL`. Do not swap the center `VW` connection.
+
+### Important warnings
+
+- **Check the Owltree VCC pad before wiring.** Only connect the Owltree `VCC` pad to `VBUS/5V` after confirming it is the controller's 5 V logic supply. Do **not** connect a 12 V fan-output or 12 V input rail to the RP2040.
+- **Logic voltage.** The RP2040 GPIO pins output 3.3 V logic. Some X9C103 modules powered from 5 V may require a control-high voltage above 3.3 V — if the module does not respond reliably, use a 3.3-to-5 V logic-level shifter on `GP29 → INC`, `GP28 → U/D`, and `GP27 → CS`. Never feed 5 V into an RP2040 GPIO pin.
+- **Isolate the original pot.** Remove or electrically isolate the Owltree's original B10K potentiometer before wiring the X9C103 to its pads.
+
+## Flashing the RP2040-Zero
+
+### Method 1: Flash a compiled UF2 file (easiest)
+
+1. Disconnect the RP2040-Zero from USB.
+2. Press and hold the `BOOT` / `BOOTSEL` button on the RP2040-Zero.
+3. While holding the button, connect the board to your computer with a USB **data** cable.
+4. Release the button once the board appears as a USB drive named `RPI-RP2`.
+5. Copy the firmware `.uf2` file (e.g. `owltree_fan_controller.uf2`) onto the `RPI-RP2` drive.
+6. The drive disconnects automatically and the board reboots into the firmware.
+
+To re-enter bootloader mode at any time, repeat the hold-`BOOTSEL`-while-connecting procedure.
+
+### Method 2: Flash through the Arduino IDE
+
+**Install RP2040 board support:**
+
+1. Open **File → Preferences** and add this URL under **Additional Boards Manager URLs**:
+
+   ```
+   https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+   ```
+
+2. Open **Tools → Board → Boards Manager**, search for `Raspberry Pi Pico/RP2040`, and install the package by Earle F. Philhower.
+
+**Select the board:**
+
+```
+Tools → Board → Raspberry Pi RP2040 Boards → Waveshare RP2040 Zero
+```
+
+If that exact entry is unavailable, select `Generic RP2040`.
+
+**Upload:**
+
+1. Connect the RP2040-Zero over USB and select its port under **Tools → Port**.
+2. Open the fan-controller firmware sketch and click **Upload**.
+3. For the first upload you may need to enter bootloader mode manually: disconnect USB, hold `BOOTSEL`, reconnect USB, release `BOOTSEL`, then click **Upload** again.
+
+After the first successful flash, normal uploads should work without holding `BOOTSEL`.
+
+### Basic X9C103 test firmware
+
+This minimal sketch drives the digital pot to one end stop, then back to ~50% — use it to verify wiring before installing the full firmware:
+
+```cpp
+#include <Arduino.h>
+
+constexpr uint8_t PIN_INC = 29;
+constexpr uint8_t PIN_UD  = 28;
+constexpr uint8_t PIN_CS  = 27;
+
+void pulseIncrement() {
+  digitalWrite(PIN_INC, LOW);
+  delayMicroseconds(5);
+  digitalWrite(PIN_INC, HIGH);
+  delayMicroseconds(5);
+}
+
+void moveSteps(bool increase, int steps) {
+  digitalWrite(PIN_CS, LOW);
+  digitalWrite(PIN_UD, increase ? HIGH : LOW);
+  delayMicroseconds(5);
+
+  for (int i = 0; i < steps; ++i) {
+    pulseIncrement();
+  }
+
+  digitalWrite(PIN_CS, HIGH);
+  delay(10);
+}
+
+void setup() {
+  pinMode(PIN_INC, OUTPUT);
+  pinMode(PIN_UD, OUTPUT);
+  pinMode(PIN_CS, OUTPUT);
+
+  digitalWrite(PIN_INC, HIGH);
+  digitalWrite(PIN_UD, LOW);
+  digitalWrite(PIN_CS, HIGH);
+
+  delay(1000);
+
+  // Move fully toward the low end.
+  moveSteps(false, 110);
+
+  // Move approximately halfway up.
+  moveSteps(true, 50);
+}
+
+void loop() {
+  // Fan remains at the position selected during setup.
+}
+```
+
+The X9C103 has ~100 positions; sending 110 steps guarantees it reaches the end stop without damage.
+
+### First power-on procedure
+
+1. Power the circuit **without** connecting a fan.
+2. Confirm the RP2040 receives ~5 V on `VBUS`.
+3. Confirm no RP2040 GPIO pin sees more than 3.3 V.
+4. Measure the voltages on the Owltree potentiometer terminals and confirm `VH`, `VW`, and `VL` stay within the X9C103's permitted terminal-voltage range.
+5. Connect the fan.
+6. Flash the test firmware above and confirm the fan settles at roughly half speed.
+7. If the speed direction is reversed, swap `VH` and `VL`.
 
 ## Performance
 
