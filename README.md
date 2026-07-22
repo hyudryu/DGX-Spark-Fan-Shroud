@@ -4,6 +4,10 @@ Fan shroud for the NVIDIA DGX Spark (GX10) platform, for improved cooling perfor
 
 The stock cooling on the DGX Spark can thermal-throttle during sustained multi-hour training or inference runs. This project adds a 3D-printed shroud that mounts a high-static-pressure Noctua industrialPPC fan over the heatsink, driven by a closed-loop controller that ramps fan speed with chip temperature — quiet at idle, full airflow under load.
 
+## Compatibility
+
+> **Disclaimer:** This design has only been tested on the **ASUS Ascent GX10**. The DGX Spark platform has several vendor variants (NVIDIA Founders Edition, ASUS, MSI, Gigabyte, etc.) with different chassis dimensions — if you have a different variant, you will need to revise the design (the STEP files are provided for exactly this) to fit your unit.
+
 ## Repository Contents
 
 | Path | Description |
@@ -35,6 +39,69 @@ You will also need:
 3. **Actuate** — the firmware sets the digital potentiometer wiper, which drives the analog control input of the PWM controller, which in turn sets the fan's duty cycle.
 
 This keeps the fan curve entirely under software control — you can tune it from a config file or CLI without touching hardware.
+
+## Wiring
+
+The X9C103 digital pot replaces the Owltree controller's onboard B10K potentiometer: remove (or ignore) the onboard pot and wire the X9C103's resistor terminals to its pads.
+
+### RP2040-Zero → X9C103 Digital Pot
+
+```
+RP2040-Zero              X9C103 Digital Pot
+────────────              ──────────────────
+VBUS / 5V  ────────────── VCC
+GND        ────────────── GND
+GP29       ────────────── INC
+GP28       ────────────── U/D
+GP27       ────────────── CS
+```
+
+### RP2040-Zero → Owltree PWM Controller
+
+```
+RP2040-Zero              Owltree PWM Controller
+────────────              ───────────────────────
+VBUS / 5V  ────────────── VCC
+GND        ────────────── GND
+```
+
+### Owltree B10K Pot Pads → X9C103
+
+```
+Owltree B10K Pot Pads     X9C103
+─────────────────────     ──────
+Outer pad 1  ──────────── VH
+Center/wiper pad ──────── VW
+Outer pad 2  ──────────── VL
+```
+
+### Full power layout
+
+```
+USB-C 5V
+   │
+   ├── RP2040-Zero VBUS / 5V
+   ├── X9C103 VCC
+   └── Owltree PWM Controller VCC
+
+USB-C GND
+   │
+   ├── RP2040-Zero GND
+   ├── X9C103 GND
+   └── Owltree PWM Controller GND
+```
+
+### Full control layout
+
+```
+RP2040 GP29 ───────── X9C103 INC
+RP2040 GP28 ───────── X9C103 U/D
+RP2040 GP27 ───────── X9C103 CS
+
+X9C103 VH ─────────── Owltree outer pot pad
+X9C103 VW ─────────── Owltree center/wiper pad
+X9C103 VL ─────────── Owltree outer pot pad
+```
 
 ## Performance
 
