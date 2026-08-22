@@ -12,8 +12,8 @@ The stock cooling on the DGX Spark can thermal-throttle during sustained multi-h
 
 | Path | Description |
 | --- | --- |
-| `3D Files/STL/` | Print-ready STL files (`GX10 Shroud.stl`, `GX10 Shroud Leg.stl`) |
-| `3D Files/STEP/` | Editable STEP files (`GX10 Shroud.step`, `GX10 Leg.step`) for remixing in your CAD tool of choice |
+| `3D Files/STL/` | Print-ready STL files (`DGX Spark Shroud.stl`, `Shroud Leg.stl`) |
+| `3D Files/STEP/` | Editable STEP files (`DGX Spark Shroud.step`, `Shroud Leg.step`) for remixing in your CAD tool of choice |
 | `Benchmark/` | Interactive thermal benchmark graph (open the HTML file in a browser) |
 
 ## Bill of Materials
@@ -228,7 +228,7 @@ The X9C103 has ~100 positions; sending 110 steps guarantees it reaches the end s
 ## 3D Printing
 
 - Print the shroud in a temperature-resistant filament — **PETG minimum, ASA/ABS or PC blend recommended** near the heatsink exhaust.
-- The leg (`GX10 Shroud Leg.stl`) supports the shroud against the chassis; print with the flat face on the build plate.
+- The leg (`Shroud Leg.stl`) supports the shroud against the chassis; print with the flat face on the build plate.
 - Suggested settings: 0.2 mm layers, 4 walls, 40 %+ infill for the legs.
 
 ## Firmware & Software
