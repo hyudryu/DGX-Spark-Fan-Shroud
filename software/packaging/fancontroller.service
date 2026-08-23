@@ -1,0 +1,12 @@
+[Unit]
+Description=DGX Spark Fan Controller via RP2040
+
+[Service]
+Type=simple
+WorkingDirectory=%h/FanController
+ExecStart=/usr/bin/python3 -m fancontroller.daemon
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target
