@@ -4,6 +4,33 @@ Fan shroud for the NVIDIA DGX Spark (GX10) platform, for improved cooling perfor
 
 The stock cooling on the DGX Spark can thermal-throttle during sustained multi-hour training or inference runs. This project adds a 3D-printed shroud that mounts a high-static-pressure Noctua industrialPPC fan over the heatsink, driven by a closed-loop controller that ramps fan speed with chip temperature — quiet at idle, full airflow under load.
 
+## Cooling Results
+
+### ASUS Ascent GX10
+
+![GX10 temperature comparison with and without the fan shroud](Benchmark/temperature-runs-2026-08-23T18-37-46-427Z.png)
+
+In this roughly 12-minute run, the shroud reduced the recorded CPU peak from 93.6 °C to 75.0 °C and the GPU peak from 87.0 °C to 69.0 °C — reductions of 18.6 °C and 18.0 °C, respectively.
+
+### NVIDIA DGX Spark
+
+![DGX Spark Stable Diffusion temperature comparison with and without the fan shroud](Benchmark/temperature-runs-2026-08-23T18-37-36-678Z.png)
+
+In this roughly 11-minute Stable Diffusion run, the shroud reduced the recorded CPU peak from 89.5 °C to 85.8 °C and the GPU peak from 84.0 °C to 80.0 °C — reductions of 3.7 °C and 4.0 °C, respectively.
+
+### Findings
+
+Both comparisons show lower CPU and GPU peak temperatures with the fan shroud installed. The size of the improvement varies with the system and its vent layout, so the results are reported separately rather than treating a single result as universal.
+
+| System | CPU peak | GPU peak | Observed reduction |
+| --- | --- | --- | --- |
+| ASUS Ascent GX10 | 93.6 °C without fan vs. 75.0 °C with fan | 87.0 °C without fan vs. 69.0 °C with fan | 18.6 °C CPU, 18.0 °C GPU |
+| NVIDIA DGX Spark | 89.5 °C without fan vs. 85.8 °C with fan | 84.0 °C without fan vs. 80.0 °C with fan | 3.7 °C CPU, 4.0 °C GPU |
+
+- **Up to ~18–19 °C lower peak temperatures** in the ASUS Ascent GX10 comparison.
+- Configured to **maintain ~80 °C under normal regular use** via the software fan curve.
+- See `Benchmark/` for the interactive thermal benchmark graph and source comparisons.
+
 ## Compatibility
 
 > **Compatibility note:** This design has been tested on the **ASUS Ascent GX10** and also works on the **NVIDIA DGX Spark**. The cooling improvement is much smaller on the NVIDIA DGX Spark because of its vent layout.
@@ -191,33 +218,6 @@ The X9C103 has ~100 positions; sending 110 steps guarantees it reaches the end s
 5. Connect the fan.
 6. Flash the test firmware above and confirm the fan settles at roughly half speed.
 7. If the speed direction is reversed, swap `VH` and `VL`.
-
-## Performance
-
-- **Up to ~18–19 °C lower peak temperatures** in the GX10 comparison shown below.
-- Configured to **maintain ~80 °C under normal regular use** via the software fan curve.
-- See `Benchmark/` for an interactive thermal benchmark graph comparing runs.
-
-### Benchmark findings
-
-Both captured comparisons show lower CPU and GPU peak temperatures with the fan shroud installed. The size of the improvement varies between runs, so the screenshots and their measured peaks are reported separately rather than treating a single result as universal.
-
-| Comparison | CPU peak | GPU peak | Observed reduction |
-| --- | --- | --- | --- |
-| DGX Spark Stable Diffusion test | 89.5 °C without fan vs. 85.8 °C with fan | 84.0 °C without fan vs. 80.0 °C with fan | 3.7 °C CPU, 4.0 °C GPU |
-| GX10 comparison run | 93.6 °C without fan vs. 75.0 °C with fan | 87.0 °C without fan vs. 69.0 °C with fan | 18.6 °C CPU, 18.0 °C GPU |
-
-#### DGX Spark Stable Diffusion test
-
-![DGX Spark Stable Diffusion temperature comparison with and without the fan shroud](Benchmark/temperature-runs-2026-08-23T18-37-36-678Z.png)
-
-In this roughly 11-minute run, the shroud reduced the recorded CPU peak from 89.5 °C to 85.8 °C and the GPU peak from 84.0 °C to 80.0 °C.
-
-#### GX10 comparison run
-
-![GX10 temperature comparison with and without the fan shroud](Benchmark/temperature-runs-2026-08-23T18-37-46-427Z.png)
-
-In this roughly 12-minute run, the shroud reduced the recorded CPU peak from 93.6 °C to 75.0 °C and the GPU peak from 87.0 °C to 69.0 °C. This is the run behind the project's up-to-~20 °C cooling claim.
 
 ## 3D Printing
 
