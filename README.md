@@ -6,7 +6,9 @@ The stock cooling on the DGX Spark can thermal-throttle during sustained multi-h
 
 ## Compatibility
 
-> **Disclaimer:** This design has only been tested on the **ASUS Ascent GX10**. The DGX Spark platform has several vendor variants (NVIDIA Founders Edition, ASUS, MSI, Gigabyte, etc.) with different chassis dimensions — if you have a different variant, you will need to revise the design (the STEP files are provided for exactly this) to fit your unit.
+> **Compatibility note:** This design has been tested on the **ASUS Ascent GX10** and also works on the **NVIDIA DGX Spark**. The cooling improvement is much smaller on the NVIDIA DGX Spark because of its vent layout.
+>
+> The ASUS Ascent GX10 provides the optimal airflow path for this shroud: cool air enters through the bottom vents and hot air exhausts out the back. Other vendor variants, including MSI and Gigabyte systems, may have different chassis dimensions or vent layouts and may require changes to the design. Editable STEP files are included for adapting the fit.
 
 ## Repository Contents
 
