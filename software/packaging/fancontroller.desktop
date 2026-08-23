@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Fan Controller
+Comment=USB fan PID/curve controller
+Path=__INSTALL_DIR__
+Exec=python3 -m fancontroller --ui-only
+Icon=preferences-system
+Terminal=false
+Categories=System;Utility;
+StartupNotify=false

@@ -1,6 +1,6 @@
 # DGX-Spark-Fan-Shroud
 
-Fan shroud for the NVIDIA DGX Spark (GX10) platform, for improved cooling performance on long workloads. Full STL/STEP files + electronics schematics, plus firmware and host software for automatic temperature-based fan control.
+Fan shroud for the NVIDIA DGX Spark (GX10) platform, for improved cooling performance on long workloads. Full STL/STEP files, electronics schematics, RP2040 firmware, and the FanController host application for automatic temperature-based fan control.
 
 The stock cooling on the DGX Spark can thermal-throttle during sustained multi-hour training or inference runs. This project adds a 3D-printed shroud that mounts a high-static-pressure Noctua industrialPPC fan over the heatsink, driven by a closed-loop controller that ramps fan speed with chip temperature — quiet at idle, full airflow under load.
 
@@ -44,6 +44,8 @@ Both comparisons show lower CPU and GPU peak temperatures with the fan shroud in
 | `3D Files/STL/` | Print-ready STL files (`DGX Spark Shroud.stl`, `Shroud Leg.stl`) |
 | `3D Files/STEP/` | Editable STEP files (`DGX Spark Shroud.step`, `Shroud Leg.step`) for remixing in your CAD tool of choice |
 | `Benchmark/` | Interactive thermal benchmark graph plus PNG comparisons for quick viewing on GitHub |
+| `firmware/` | MicroPython firmware for the RP2040-Zero and X9C103 digital potentiometer |
+| `software/` | FanController host application, systemd service, and tests |
 
 ## Bill of Materials
 
@@ -52,7 +54,7 @@ Both comparisons show lower CPU and GPU peak temperatures with the fan shroud in
 | Noctua industrialPPC fan | High static pressure / airflow through the shroud | https://amzn.to/4gRzM0Q |
 | PWM controller | Generates the 25 kHz PWM signal that drives the fan | https://amzn.to/4pzXktr |
 | Digital potentiometer | Sets the control voltage on the PWM controller from the microcontroller | https://amzn.to/4ffs8ft |
-| RP2040-Zero | Microcontroller that reads temperature and drives the digital potentiometer | https://amzn.to/3TepWfD |
+| RP2040-Zero | Receives host duty commands and drives the digital potentiometer | https://amzn.to/3TepWfD |
 
 *(Links are Amazon affiliate links.)*
 
@@ -65,7 +67,7 @@ You will also need:
 ## How It Works
 
 1. **Sense** — the control software polls the SoC temperature on the Spark (via `nvidia-smi` / tegrastats / hwmon).
-2. **Decide** — a control loop (hysteresis or PI curve) maps temperature to a target fan duty cycle.
+2. **Decide** — a fan curve, PID loop, or hysteresis controller maps temperature to a target fan duty cycle.
 3. **Actuate** — the firmware sets the digital potentiometer wiper, which drives the analog control input of the PWM controller, which in turn sets the fan's duty cycle.
 
 This keeps the fan curve entirely under software control — you can tune it from a config file or CLI without touching hardware.
@@ -143,48 +145,17 @@ If the fan speed moves in the **opposite direction** from what the firmware expe
 
 ## Flashing the RP2040-Zero
 
-### Method 1: Flash a compiled UF2 file (easiest)
+The included controller is [MicroPython firmware](firmware/main.py). Install
+MicroPython on the RP2040-Zero, then copy the controller to the device as
+`main.py` so it starts automatically at boot. See the
+[firmware installation guide](firmware/README.md) for exact commands and the
+USB serial protocol.
 
-1. Disconnect the RP2040-Zero from USB.
-2. Press and hold the `BOOT` / `BOOTSEL` button on the RP2040-Zero.
-3. While holding the button, connect the board to your computer with a USB **data** cable.
-4. Release the button once the board appears as a USB drive named `RPI-RP2`.
-5. Copy the firmware `.uf2` file (e.g. `owltree_fan_controller.uf2`) onto the `RPI-RP2` drive.
-6. The drive disconnects automatically and the board reboots into the firmware.
+### Optional Arduino X9C103 test sketch
 
-To re-enter bootloader mode at any time, repeat the hold-`BOOTSEL`-while-connecting procedure.
-
-### Method 2: Flash through the Arduino IDE
-
-**Install RP2040 board support:**
-
-1. Open **File → Preferences** and add this URL under **Additional Boards Manager URLs**:
-
-   ```
-   https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
-   ```
-
-2. Open **Tools → Board → Boards Manager**, search for `Raspberry Pi Pico/RP2040`, and install the package by Earle F. Philhower.
-
-**Select the board:**
-
-```
-Tools → Board → Raspberry Pi RP2040 Boards → Waveshare RP2040 Zero
-```
-
-If that exact entry is unavailable, select `Generic RP2040`.
-
-**Upload:**
-
-1. Connect the RP2040-Zero over USB and select its port under **Tools → Port**.
-2. Open the fan-controller firmware sketch and click **Upload**.
-3. For the first upload you may need to enter bootloader mode manually: disconnect USB, hold `BOOTSEL`, reconnect USB, release `BOOTSEL`, then click **Upload** again.
-
-After the first successful flash, normal uploads should work without holding `BOOTSEL`.
-
-### Basic X9C103 test firmware
-
-This minimal sketch drives the digital pot to one end stop, then back to ~50% — use it to verify wiring before installing the full firmware:
+This standalone sketch drives the digital pot to one end stop, then back to
+~50%. It can be used with the Arduino IDE to verify wiring before installing
+the MicroPython controller:
 
 ```cpp
 #include <Arduino.h>
@@ -251,13 +222,32 @@ The X9C103 has ~100 positions; sending 110 steps guarantees it reaches the end s
 ## 3D Printing
 
 - The revised `Shroud Leg` model is **65 mm tall overall**, 15 mm taller than the previous 50 mm version. Matching STL and STEP versions are included so the printable and editable models stay in sync.
-- Print the shroud in a temperature-resistant filament — **PETG minimum, ASA/ABS or PC blend recommended** near the heatsink exhaust.
-- The leg (`Shroud Leg.stl`) supports the shroud against the chassis; print with the flat face on the build plate.
-- Suggested settings: 0.2 mm layers, 4 walls, 40 %+ infill for the legs.
+
+### Recommended print settings
+
+| Setting | Recommendation |
+| --- | --- |
+| Material | **PLA+ is suitable.** PETG, ASA/ABS, or a PC blend can also be used for greater temperature resistance. |
+| Orientation | **Print each leg flat side down.** Keep the shroud in its supplied STL orientation. |
+| Supports | **Tree/organic supports enabled** |
+| Layer height | 0.2 mm |
+| Walls | 4 |
+| Infill | 40% or greater for the legs |
+
+The leg (`Shroud Leg.stl`) supports the shroud against the chassis. Place its flat side directly on the build plate before slicing.
 
 ## Firmware & Software
 
-Firmware for the MCU (digital-pot driver, serial command interface) and the host-side daemon (temperature polling + fan curve) live in this repository and are being fleshed out alongside the hardware. See the repo issues/roadmap for current status.
+The [`firmware/`](firmware/) directory contains the RP2040 digital-pot driver
+and serial command interface. It starts at maximum cooling and returns to
+maximum cooling if its host heartbeat disappears for five seconds.
+
+The [`software/`](software/) directory contains the FanController application.
+It discovers CPU and GPU temperature sensors, provides curve, PID, hysteresis,
+and manual modes, and communicates with the firmware using `DUTY 0..255` and
+`PING` commands over USB serial. See the
+[software installation guide](software/README.md) to install the desktop UI
+and headless systemd service.
 
 ## License
 
