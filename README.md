@@ -14,7 +14,7 @@ The stock cooling on the DGX Spark can thermal-throttle during sustained multi-h
 | --- | --- |
 | `3D Files/STL/` | Print-ready STL files (`DGX Spark Shroud.stl`, `Shroud Leg.stl`) |
 | `3D Files/STEP/` | Editable STEP files (`DGX Spark Shroud.step`, `Shroud Leg.step`) for remixing in your CAD tool of choice |
-| `Benchmark/` | Interactive thermal benchmark graph (open the HTML file in a browser) |
+| `Benchmark/` | Interactive thermal benchmark graph plus PNG comparisons for quick viewing on GitHub |
 
 ## Bill of Materials
 
@@ -221,12 +221,34 @@ The X9C103 has ~100 positions; sending 110 steps guarantees it reaches the end s
 
 ## Performance
 
-- **~20 °C cooler under max load** compared to stock cooling.
+- **Up to ~18–19 °C lower peak temperatures** in the GX10 comparison shown below.
 - Configured to **maintain ~80 °C under normal regular use** via the software fan curve.
 - See `Benchmark/` for an interactive thermal benchmark graph comparing runs.
 
+### Benchmark findings
+
+Both captured comparisons show lower CPU and GPU peak temperatures with the fan shroud installed. The size of the improvement varies between runs, so the screenshots and their measured peaks are reported separately rather than treating a single result as universal.
+
+| Comparison | CPU peak | GPU peak | Observed reduction |
+| --- | --- | --- | --- |
+| DGX Spark Stable Diffusion test | 89.5 °C without fan vs. 85.8 °C with fan | 84.0 °C without fan vs. 80.0 °C with fan | 3.7 °C CPU, 4.0 °C GPU |
+| GX10 comparison run | 93.6 °C without fan vs. 75.0 °C with fan | 87.0 °C without fan vs. 69.0 °C with fan | 18.6 °C CPU, 18.0 °C GPU |
+
+#### DGX Spark Stable Diffusion test
+
+![DGX Spark Stable Diffusion temperature comparison with and without the fan shroud](Benchmark/temperature-runs-2026-08-23T18-37-36-678Z.png)
+
+In this roughly 11-minute run, the shroud reduced the recorded CPU peak from 89.5 °C to 85.8 °C and the GPU peak from 84.0 °C to 80.0 °C.
+
+#### GX10 comparison run
+
+![GX10 temperature comparison with and without the fan shroud](Benchmark/temperature-runs-2026-08-23T18-37-46-427Z.png)
+
+In this roughly 12-minute run, the shroud reduced the recorded CPU peak from 93.6 °C to 75.0 °C and the GPU peak from 87.0 °C to 69.0 °C. This is the run behind the project's up-to-~20 °C cooling claim.
+
 ## 3D Printing
 
+- The revised `Shroud Leg` model is **15 mm longer** (41 mm instead of 26 mm). Matching STL and STEP versions are included so the printable and editable models stay in sync.
 - Print the shroud in a temperature-resistant filament — **PETG minimum, ASA/ABS or PC blend recommended** near the heatsink exhaust.
 - The leg (`Shroud Leg.stl`) supports the shroud against the chassis; print with the flat face on the build plate.
 - Suggested settings: 0.2 mm layers, 4 walls, 40 %+ infill for the legs.
