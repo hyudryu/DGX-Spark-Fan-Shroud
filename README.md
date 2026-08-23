@@ -250,7 +250,7 @@ The X9C103 has ~100 positions; sending 110 steps guarantees it reaches the end s
 
 ## 3D Printing
 
-- The revised `Shroud Leg` model is **15 mm longer** (41 mm instead of 26 mm). Matching STL and STEP versions are included so the printable and editable models stay in sync.
+- The revised `Shroud Leg` model is **65 mm tall overall**, 15 mm taller than the previous 50 mm version. Matching STL and STEP versions are included so the printable and editable models stay in sync.
 - Print the shroud in a temperature-resistant filament — **PETG minimum, ASA/ABS or PC blend recommended** near the heatsink exhaust.
 - The leg (`Shroud Leg.stl`) supports the shroud against the chassis; print with the flat face on the build plate.
 - Suggested settings: 0.2 mm layers, 4 walls, 40 %+ infill for the legs.
