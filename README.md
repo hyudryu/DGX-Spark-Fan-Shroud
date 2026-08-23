@@ -8,9 +8,9 @@ The stock cooling on the DGX Spark can thermal-throttle during sustained multi-h
 
 ### ASUS Ascent GX10
 
-![GX10 temperature comparison with and without the fan shroud](Benchmark/temperature-runs-2026-08-23T18-37-46-427Z.png)
+![ASUS Ascent GX10 Stable Diffusion temperature comparison with and without the fan shroud](Benchmark/temperature-runs-2026-08-23T20-55-47-800Z.png)
 
-In this roughly 12-minute run, the shroud reduced the recorded CPU peak from 93.6 °C to 75.0 °C and the GPU peak from 87.0 °C to 69.0 °C — reductions of 18.6 °C and 18.0 °C, respectively.
+In this roughly 12-minute Stable Diffusion run, the shroud reduced the recorded CPU peak from 93.6 °C to 75.0 °C and the GPU peak from 87.0 °C to 69.0 °C — reductions of 18.6 °C and 18.0 °C, respectively.
 
 ### NVIDIA DGX Spark
 
