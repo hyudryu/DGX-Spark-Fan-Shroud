@@ -1,6 +1,6 @@
 # DGX-Spark-Fan-Shroud
 
-Fan shroud for the NVIDIA DGX Spark (GX10) platform, for improved cooling performance on long workloads. Full STL/STEP files, electronics schematics, RP2040 firmware, and the FanController host application for automatic temperature-based fan control.
+Fan shrouds for NVIDIA GB10 systems, including the NVIDIA DGX Spark and partner platforms, for improved cooling performance on long workloads. Full STL/STEP files, electronics schematics, RP2040 firmware, and the FanController host application provide automatic temperature-based fan control.
 
 The stock cooling on the DGX Spark can thermal-throttle during sustained multi-hour training or inference runs. This project adds a 3D-printed shroud that mounts a high-static-pressure Noctua industrialPPC fan over the heatsink, driven by a closed-loop controller that ramps fan speed with chip temperature — quiet at idle, full airflow under load.
 
@@ -33,16 +33,20 @@ Both comparisons show lower CPU and GPU peak temperatures with the fan shroud in
 
 ## Compatibility
 
-> **Compatibility note:** This design has been tested on the **ASUS Ascent GX10** and also works on the **NVIDIA DGX Spark**. The cooling improvement is much smaller on the NVIDIA DGX Spark because of its vent layout.
+> **Compatibility note:** The design has been tested on the **ASUS Ascent GX10** and **NVIDIA DGX Spark**. The cooling improvement is much smaller on the NVIDIA DGX Spark because of its vent layout.
 >
-> The ASUS Ascent GX10 provides the optimal airflow path for this shroud: cool air enters through the bottom vents and hot air exhausts out the back. Other vendor variants, including MSI and Gigabyte systems, may have different chassis dimensions or vent layouts and may require changes to the design. Editable STEP files are included for adapting the fit.
+> Platform-specific files are also included for the **Gigabyte AI TOP ATOM**, **HP ZGX Nano**, **Lenovo ThinkStation PGX**, and **MSI EdgeXpert**. These variants have different chassis dimensions or vent layouts; verify fit and clearance before printing. Editable STEP files are included for inspection and adaptation.
 
 ## Repository Contents
 
 | Path | Description |
 | --- | --- |
-| `3D Files/STL/` | Print-ready STL files (`DGX Spark Shroud.stl`, `Shroud Leg.stl`) |
-| `3D Files/STEP/` | Editable STEP files (`DGX Spark Shroud.step`, `Shroud Leg.step`) for remixing in your CAD tool of choice |
+| `3D Files/Asus Ascent GX10/` | ASUS shroud V2 plus shroud and stacking legs, in print-ready STL and editable STEP formats |
+| `3D Files/Gigabyte AI Top Atom/` | Gigabyte fan/front shrouds plus shroud and stacking legs, in STL and STEP formats |
+| `3D Files/HP ZGX Nano/` | HP fan/front shrouds plus shroud and stacking legs, in STL and STEP formats |
+| `3D Files/Lenovo Thinkstation PGX/` | Lenovo fan/front shrouds plus shroud and stacking legs, in STL and STEP formats |
+| `3D Files/MSI EdgeXpert/` | MSI fan/front shrouds plus shroud and stacking legs, in STL and STEP formats |
+| `3D Files/Nvidia DGX Spark/` | NVIDIA fan/front shrouds plus shroud and stacking legs, in STL and STEP formats |
 | `Benchmark/` | Interactive thermal benchmark graph plus PNG comparisons for quick viewing on GitHub |
 | `firmware/` | MicroPython firmware for the RP2040-Zero and X9C103 digital potentiometer |
 | `software/` | FanController host application, systemd service, and tests |
@@ -221,6 +225,7 @@ The X9C103 has ~100 positions; sending 110 steps guarantees it reaches the end s
 
 ## 3D Printing
 
+- Choose the folder matching your system before slicing. Every platform folder keeps its print-ready STL and editable STEP files together.
 - The revised `Shroud Leg` model is **65 mm tall overall**, 15 mm taller than the previous 50 mm version. Matching STL and STEP versions are included so the printable and editable models stay in sync.
 
 ### Recommended print settings
