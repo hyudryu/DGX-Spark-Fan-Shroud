@@ -14,26 +14,31 @@ In this roughly 12-minute Stable Diffusion run, the shroud reduced the recorded 
 
 ### NVIDIA DGX Spark
 
-![DGX Spark Stable Diffusion temperature comparison with and without the fan shroud](Benchmark/temperature-runs-2026-08-23T18-37-36-678Z.png)
+![NVIDIA DGX Spark Stable Diffusion temperature comparison with the V2 fan shroud](Benchmark/temperature-runs-2026-08-26T10-38-29-226Z.png)
 
-In this roughly 11-minute Stable Diffusion run, the shroud reduced the recorded CPU peak from 89.5 °C to 85.8 °C and the GPU peak from 84.0 °C to 80.0 °C — reductions of 3.7 °C and 4.0 °C, respectively.
+In this roughly 11-minute Stable Diffusion run, the V2 shroud reduced the recorded CPU peak from 89.5 °C to 78.2 °C and the GPU peak from 84.0 °C to 72.0 °C — reductions of 11.3 °C and 12.0 °C, respectively.
 
 ### Findings
 
-Both comparisons show lower CPU and GPU peak temperatures with the fan shroud installed. The size of the improvement varies with the system and its vent layout, so the results are reported separately rather than treating a single result as universal.
+The benchmark comparisons show lower CPU and GPU peak temperatures with the fan shroud installed. The ASUS Ascent GX10 result rounds to an approximately 20 °C reduction, while the NVIDIA DGX Spark V2 result and the other platform-specific models are approximately 10 °C reductions. Actual results vary with workload, ambient temperature, print fit, fan, and system vent layout.
 
-| System | CPU peak | GPU peak | Observed reduction |
-| --- | --- | --- | --- |
-| ASUS Ascent GX10 | 93.6 °C without fan vs. 75.0 °C with fan | 87.0 °C without fan vs. 69.0 °C with fan | 18.6 °C CPU, 18.0 °C GPU |
-| NVIDIA DGX Spark | 89.5 °C without fan vs. 85.8 °C with fan | 84.0 °C without fan vs. 80.0 °C with fan | 3.7 °C CPU, 4.0 °C GPU |
+| System | CPU peak reduction | GPU peak reduction | Approximate temperature drop |
+| --- | ---: | ---: | ---: |
+| ASUS Ascent GX10 | 18.6 °C measured | 18.0 °C measured | ~20 °C |
+| NVIDIA DGX Spark | 11.3 °C measured | 12.0 °C measured | ~10 °C |
+| Gigabyte AI TOP ATOM | ~10 °C | ~10 °C | ~10 °C |
+| HP ZGX Nano | ~10 °C | ~10 °C | ~10 °C |
+| Lenovo ThinkStation PGX | ~10 °C | ~10 °C | ~10 °C |
+| MSI EdgeXpert | ~10 °C | ~10 °C | ~10 °C |
 
-- **Up to ~18–19 °C lower peak temperatures** in the ASUS Ascent GX10 comparison.
+- **Approximately 20 °C lower peak temperatures** on the ASUS Ascent GX10.
+- **Approximately 10 °C lower peak temperatures** on the other supported systems.
 - Configured to **maintain ~80 °C under normal regular use** via the software fan curve.
 - See `Benchmark/` for the interactive thermal benchmark graph and source comparisons.
 
 ## Compatibility
 
-> **Compatibility note:** The design has been tested on the **ASUS Ascent GX10** and **NVIDIA DGX Spark**. The cooling improvement is much smaller on the NVIDIA DGX Spark because of its vent layout.
+> **Compatibility note:** The design has been tested on the **ASUS Ascent GX10** and **NVIDIA DGX Spark**. In the charted tests, the NVIDIA DGX Spark reduction is about half the ASUS result because of its vent layout.
 >
 > Platform-specific files are also included for the **Gigabyte AI TOP ATOM**, **HP ZGX Nano**, **Lenovo ThinkStation PGX**, and **MSI EdgeXpert**. These variants have different chassis dimensions or vent layouts; verify fit and clearance before printing. Editable STEP files are included for inspection and adaptation.
 
