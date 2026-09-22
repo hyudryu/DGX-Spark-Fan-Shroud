@@ -4,6 +4,8 @@ Fan shroud for the NVIDIA DGX Spark (GX10) platform, for improved cooling perfor
 
 The stock cooling on the DGX Spark can thermal-throttle during sustained multi-hour training or inference runs. This project adds a 3D-printed shroud that mounts a high-static-pressure Noctua industrialPPC fan over the heatsink, driven by a closed-loop controller that ramps fan speed with chip temperature — quiet at idle, full airflow under load.
 
+![Render of the ASUS Ascent GX10 with the fan shroud and stacking legs installed](renders/e6994eba-d242-4a91-9caf-1c667e20f469.PNG)
+
 ## Cooling Results
 
 ### ASUS Ascent GX10
@@ -45,6 +47,7 @@ Both comparisons show lower CPU and GPU peak temperatures with the fan shroud in
 | `3D Files/STEP/` | Editable STEP files (`DGX Spark Shroud.step`, `Shroud Leg.step`) for remixing in your CAD tool of choice |
 | `Benchmark/` | Interactive thermal benchmark graph plus PNG comparisons for quick viewing on GitHub |
 | `firmware/` | MicroPython firmware for the RP2040-Zero and X9C103 digital potentiometer |
+| `renders/` | Product renders of the shroud installed on supported systems |
 | `software/` | FanController host application, systemd service, and tests |
 
 ## Bill of Materials
