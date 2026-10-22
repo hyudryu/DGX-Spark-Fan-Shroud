@@ -72,7 +72,7 @@ The benchmark comparisons show lower CPU and GPU peak temperatures with the fan 
 
 You will also need:
 
-- Appropriate DC power for the fan (check your fan's rated voltage — industrialPPC variants are commonly 24 V)
+- Appropriate DC power for the fan (check your fan's rated voltage — industrialPPC variants are commonly 24 V). The USB-C version of the Owltree controller boosts USB 5 V to 12 V on board, so it needs no separate fan supply, but it should be paired with a **12 V** fan.
 - A USB-C cable capable of **data** transfer (for flashing the RP2040-Zero)
 - Soldering iron and hookup wire, plus M3/M4 fasteners for the shroud legs
 
@@ -87,6 +87,10 @@ This keeps the fan curve entirely under software control — you can tune it fro
 ## Wiring
 
 The X9C103 digital pot replaces the Owltree controller's onboard B10K potentiometer: remove (or ignore) the onboard pot and wire the X9C103's resistor terminals to its pads.
+
+![Wiring schematic for the USB-C Owltree build](docs/wiring-schematic.svg)
+
+The schematic shows the single-cable build with the USB-C Owltree board: one USB-C cable from the Spark powers the RP2040, the X9C103, and (through the Owltree's onboard boost converter) the fan. See [USB-C Owltree build notes](#usb-c-owltree-build-notes) before soldering.
 
 ### RP2040-Zero → X9C103 Digital Pot
 
@@ -153,7 +157,20 @@ If the fan speed moves in the **opposite direction** from what the firmware expe
 
 - **Check the Owltree VCC pad before wiring.** Only connect the Owltree `VCC` pad to `VBUS/5V` after confirming it is the controller's 5 V logic supply. Do **not** connect a 12 V fan-output or 12 V input rail to the RP2040.
 - **Logic voltage.** The RP2040 GPIO pins output 3.3 V logic. Some X9C103 modules powered from 5 V may require a control-high voltage above 3.3 V — if the module does not respond reliably, use a 3.3-to-5 V logic-level shifter on `GP29 → INC`, `GP28 → U/D`, and `GP27 → CS`. Never feed 5 V into an RP2040 GPIO pin.
-- **Isolate the original pot.** Remove or electrically isolate the Owltree's original B10K potentiometer before wiring the X9C103 to its pads.
+- **Isolate the original pot.** Remove or electrically isolate the Owltree's original B10K potentiometer before wiring the X9C103 to its pads. If the pot has a click-off switch, bridge its switch pads (see below).
+
+### USB-C Owltree build notes
+
+These come from a build on an NVIDIA DGX Spark with the USB-C Owltree board and a 12 V Noctua NF-F12 industrialPPC-3000 PWM.
+
+- **Bridge the knob's switch pads.** The B10K pot on this board has a built-in click-off switch: five terminals, three for the pot and two for the switch. The switch is in series with the 12 V fan output, so after the pot is removed the fan gets no power. Bridge the two switch pads with a short wire. Symptom if you miss it: about 3 V instead of 12 V between fan header pins 1 and 2, and the fan never spins.
+- **Removing the pot.** Its mounting tabs and flush wiper pin make it hard to desolder cleanly. Prying it off works; check that no pads lifted afterwards.
+- **Confirm the VCC pad.** With power off, the Owltree `VCC` pad should beep to one end of the large boost inductor (marked `6R8`). That confirms it is the 5 V input and not a regulated logic rail.
+- **Run power and ground separately.** Take 5V and GND from the RP2040 to the X9C103 and to the Owltree as two separate wires each, rather than daisy-chaining through the X9C103 module. The Owltree's pair carries the fan's supply current (about 0.9 A at 5 V for a 3.6 W fan), so use 22–24 AWG for it.
+- **Leave the Owltree's own USB-C unplugged** once its `VCC` pad is wired to the RP2040, so two USB supplies are never tied together.
+- **Logic level.** On this build the X9C103 responded reliably to the RP2040's 3.3 V GPIO without a level shifter.
+- **Speed direction.** With the stock firmware (`MAX_SPEED_AT_HIGH_TAP = False`), `DUTY 255` gave full speed and `DUTY 0` stopped the fan completely. If yours is reversed, changing `MAX_SPEED_AT_HIGH_TAP` in `firmware/main.py` is an alternative to swapping `VH` and `VL`.
+- **Charge-only cables.** A charge-only USB-C cable powers the board, but the RP2040 never shows up as a USB device. If `lsusb` shows nothing new when you plug it in, try another cable.
 
 ## Flashing the RP2040-Zero
 

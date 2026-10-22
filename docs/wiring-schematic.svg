@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1060 500" width="1060" height="500" role="img" aria-label="Wiring schematic: DGX Spark USB-C to RP2040-Zero; RP2040 5V and GND run separately to the X9C103 and the Owltree; GP27, GP28, GP29 to X9C103 CS, U/D, INC; X9C103 VH, VW, VL to the Owltree pot pads; the Owltree pot's switch pads are bridged; Owltree fan header to the fan.">
+  <style>
+    .bg { fill: #ffffff; }
+    text { font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace; fill: #1b2420; }
+    .ref { font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; font-weight: 700; font-size: 15px; }
+    .pin { font-size: 12.5px; }
+    .note { font-size: 12px; fill: #59655f; }
+    .box { fill: none; stroke: #1b2420; stroke-width: 1.6; }
+    .w { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .n5v { stroke: #c2412d; } .t5v { fill: #c2412d; }
+    .ngnd { stroke: #1b2420; } .tgnd { fill: #1b2420; }
+    .nctl { stroke: #2a5db0; } .tctl { fill: #2a5db0; }
+    .npot { stroke: #a86f0c; }
+    .nfan { stroke: #6a4bb0; }
+    .nusb { stroke: #0d6b66; }
+    .njmp { stroke: #0d6b66; } .tjmp { fill: #0d6b66; }
+    .nc { stroke: #8a2c1a; stroke-width: 2; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #171d1a; }
+      text { fill: #dce4df; }
+      .note { fill: #8f9b95; }
+      .box, .ngnd { stroke: #dce4df; } .tgnd { fill: #dce4df; }
+      .n5v { stroke: #ff7a62; } .t5v { fill: #ff7a62; }
+      .nctl { stroke: #7ea8ff; } .tctl { fill: #7ea8ff; }
+      .npot { stroke: #e2ad45; }
+      .nfan { stroke: #b6a0ff; }
+      .nusb, .njmp { stroke: #52b8b0; } .tjmp { fill: #52b8b0; }
+      .nc { stroke: #ffb4a3; }
+    }
+  </style>
+  <rect class="bg" width="1060" height="500"/>
+
+  <!-- Spark -->
+  <rect class="box" x="20" y="190" width="100" height="70" rx="4"/>
+  <text class="ref" x="70" y="220" text-anchor="middle">DGX Spark</text>
+  <text class="pin" x="70" y="240" text-anchor="middle">USB-C port</text>
+  <path class="w nusb" d="M120 225 H170"/>
+  <text class="note" x="70" y="282" text-anchor="middle">data-capable</text>
+  <text class="note" x="70" y="298" text-anchor="middle">USB-C cable</text>
+
+  <!-- U1 RP2040-Zero -->
+  <text class="ref" x="212" y="110">U1 · RP2040-Zero</text>
+  <rect class="box" x="170" y="120" width="160" height="210" rx="3"/>
+  <text class="pin" x="200" y="138" text-anchor="middle">5V</text>
+  <text class="pin" x="200" y="322" text-anchor="middle">GND</text>
+  <text class="pin" x="178" y="229">USB-C</text>
+  <text class="pin" x="322" y="234" text-anchor="end">GP27</text>
+  <text class="pin" x="322" y="264" text-anchor="end">GP28</text>
+  <text class="pin" x="322" y="294" text-anchor="end">GP29</text>
+
+  <!-- +5V: separate runs from U1 to U2 and to U3 -->
+  <path class="w n5v" d="M200 120 V80 H790 V190"/>
+  <path class="w n5v" d="M200 120 V96 H545 V190"/>
+  <text class="pin t5v" x="380" y="70">+5V to Owltree (fan current, 22–24 AWG)</text>
+  <text class="pin t5v" x="380" y="110">+5V to X9C103</text>
+
+  <!-- GND: separate runs from U1 to U2 and to U3 -->
+  <path class="w ngnd" d="M200 330 V450 H770 V380"/>
+  <path class="w ngnd" d="M200 330 V420 H545 V330"/>
+  <text class="pin tgnd" x="380" y="412">GND to X9C103</text>
+  <text class="pin tgnd" x="380" y="472">GND to Owltree (fan return, 22–24 AWG)</text>
+  <!-- Both runs start at the same U1 pin -->
+  <circle class="t5v" cx="200" cy="96" r="4"/>
+  <circle class="tgnd" cx="200" cy="420" r="4"/>
+
+  <!-- Control lines -->
+  <path class="w nctl" d="M330 230 H470"/>
+  <path class="w nctl" d="M330 260 H470"/>
+  <path class="w nctl" d="M330 290 H470"/>
+  <text class="pin tctl" x="400" y="223" text-anchor="middle">CS</text>
+  <text class="pin tctl" x="400" y="253" text-anchor="middle">U/D</text>
+  <text class="pin tctl" x="400" y="283" text-anchor="middle">INC</text>
+
+  <!-- U2 X9C103 -->
+  <text class="ref" x="555" y="180">U2 · X9C103</text>
+  <rect class="box" x="470" y="190" width="150" height="140" rx="3"/>
+  <text class="pin" x="545" y="208" text-anchor="middle">VCC</text>
+  <text class="pin" x="545" y="322" text-anchor="middle">GND</text>
+  <text class="pin" x="478" y="234">CS</text>
+  <text class="pin" x="478" y="264">U/D</text>
+  <text class="pin" x="478" y="294">INC</text>
+  <text class="pin" x="612" y="234" text-anchor="end">VH</text>
+  <text class="pin" x="612" y="264" text-anchor="end">VW</text>
+  <text class="pin" x="612" y="294" text-anchor="end">VL</text>
+
+  <!-- Pot lines -->
+  <path class="w npot" d="M620 230 H740"/>
+  <path class="w npot" d="M620 260 H740"/>
+  <path class="w npot" d="M620 290 H740"/>
+  <text class="note" x="680" y="223" text-anchor="middle">outer pad</text>
+  <text class="note" x="680" y="253" text-anchor="middle">centre pad</text>
+  <text class="note" x="680" y="283" text-anchor="middle">outer pad</text>
+
+  <!-- U3 Owltree -->
+  <rect class="box" x="740" y="190" width="170" height="190" rx="3"/>
+  <text class="pin" x="790" y="208" text-anchor="middle">VCC pad</text>
+  <text class="pin" x="748" y="234">POT A</text>
+  <text class="pin" x="748" y="264">POT W</text>
+  <text class="pin" x="748" y="294">POT B</text>
+  <text class="pin" x="902" y="219" text-anchor="end">1 GND</text>
+  <text class="pin" x="902" y="244" text-anchor="end">2 +12V</text>
+  <text class="pin" x="902" y="269" text-anchor="end">3 TACH</text>
+  <text class="pin" x="902" y="294" text-anchor="end">4 PWM</text>
+  <text class="ref" x="825" y="326" text-anchor="middle">U3 · Owltree</text>
+  <text class="note" x="825" y="343" text-anchor="middle">USB-C boost board</text>
+  <text class="pin" x="770" y="372" text-anchor="middle">GND</text>
+  <text class="pin" x="830" y="372" text-anchor="middle">SW</text>
+  <text class="pin" x="862" y="372" text-anchor="middle">SW</text>
+
+  <!-- Knob switch pads: bridged -->
+  <path class="w njmp" d="M830 380 V398 H862 V380"/>
+  <text class="pin tjmp" x="846" y="418" text-anchor="middle">jumper</text>
+  <text class="note" x="846" y="434" text-anchor="middle">old knob's switch,</text>
+  <text class="note" x="846" y="449" text-anchor="middle">in series with +12V</text>
+
+  <!-- Owltree USB-C: no connect -->
+  <path class="w nc" d="M880 190 V160"/>
+  <path class="nc" d="M872 152 L888 168 M888 152 L872 168"/>
+  <text class="note" x="894" y="164">own USB-C unused</text>
+
+  <!-- Fan -->
+  <path class="w nfan" d="M910 215 H950"/>
+  <path class="w nfan" d="M910 240 H950"/>
+  <path class="w nfan" d="M910 265 H950"/>
+  <path class="w nfan" d="M910 290 H950"/>
+  <rect class="box" x="950" y="203" width="14" height="99" rx="2"/>
+  <path class="w nfan" d="M964 252 H982"/>
+  <circle class="box" cx="1012" cy="252" r="30"/>
+  <text class="ref" x="1012" y="258" text-anchor="middle">M</text>
+  <text class="note" x="1012" y="302" text-anchor="middle">12 V</text>
+  <text class="note" x="1012" y="318" text-anchor="middle">4-pin PWM</text>
+  <text class="note" x="1012" y="334" text-anchor="middle">fan</text>
+</svg>
